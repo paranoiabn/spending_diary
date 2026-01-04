@@ -1,7 +1,7 @@
-    function TotalsByCategory ({ totalCsv, totalsByCategory }) {
+    function TotalsByCategory ({ total, totalsByCategory }) {
         return (
             <>
-            <h3>Итоги: {totalCsv}</h3>
+            <h3>Итоги: {total}</h3>
       <div style={{ marginTop: 8 }}>
         <strong>По категориям:</strong>
         <ul>

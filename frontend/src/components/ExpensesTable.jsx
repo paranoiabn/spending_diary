@@ -6,7 +6,6 @@ function ExpensesTable ({ expenses }) {
                 <table border="1" cellPadding="6" >
                     <thead>
                         <tr>
-                            <th>Время</th>
                             <th>Категория</th>
                             <th>Сумма</th>
                         </tr>
@@ -14,7 +13,6 @@ function ExpensesTable ({ expenses }) {
                     <tbody>
                         {expenses.map((row, idx) => (
                             <tr key={idx}>
-                                <td>{row.date}</td>
                                 <td>{row.category}</td>
                                 <td>{row.amount}</td>
                             </tr>
