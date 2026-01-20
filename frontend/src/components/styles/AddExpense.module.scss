@@ -1,0 +1,33 @@
+@use './variables' as *; // импорт всех переменных
+
+.form {
+    font-family: Changa One;
+
+    min-height: 10vh;
+    display: grid;
+    grid-template-columns: 150px 150px 150px 120px;
+    gap: $spacing-sm; // 10px;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.input {
+    padding: 5px 10px;
+    border: 1px solid;
+    border-radius: $border-radius;
+    font-size: 16px;
+    position: relative;
+    &:focus {
+        border-color: $primary;
+        outline: none;
+    }
+
+}
+
+.error {
+    color: $error;
+    font-size: 12px;
+    margin-top: $spacing-xs;
+}
+

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Button from "./Button";
+import styles from './styles/AddExpense.module.scss';
 
 function AddExpense({ onAdd }) {
     const [date, setDate] = useState('');
@@ -19,11 +21,11 @@ function AddExpense({ onAdd }) {
         // вычисляем дату год назад
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(today.getFullYear() - 1);
-        // проверка что дата не слишком старая
+        // дата не слишком старая
         if (selectedDate < oneYearAgo) {
           newErrors.date = "Дата не может быть старше 1 года";
         }
-        // проверяем, что дата не в будущем
+        // дата не в будущем
         if (selectedDate > today) {
           newErrors.date = "Дата не может быть в будущем"
         }  
@@ -31,8 +33,8 @@ function AddExpense({ onAdd }) {
        
       if (!category) {
         newErrors.category = "Категория обязательна";
-      } else if (category.length < 5) {
-        newErrors.category = "Категория должна содержать минимум 5 символов"
+      } else if (category.length < 3) {
+        newErrors.category = "Категория должна содержать минимум 3 символов"
       }
       if (isNaN(Number(amount))) {
         newErrors.amount = "Сумма должна быть числом";
@@ -63,51 +65,47 @@ function AddExpense({ onAdd }) {
 
 
     return (
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '150px 150px 150px 120px', gap: '10px', alignItems: 'start' }}>
-      <div>
+      <form onSubmit={handleSubmit} className={styles.form}>
+      <div style={{ position:'relative'}}>
         <input
+        className={styles.input} 
           type="date"
           value={date}
           onChange={e => setDate(e.target.value)}
-          style={{ width: '100%' }}
+          style={{ width: '100%'}}
           />
-          {errors.date && <p>{errors.date}</p>}
+          {errors.date && <p style={{ position: 'absolute', top: '100%', left: '0' }} >{errors.date}</p>}
         </div>
 
-      <div>
-        <input 
+      <div style={{ position:'relative'}}>
+        <input
+          className={styles.input} 
           type="text"
           placeholder='Category'
           value={category} 
           onChange={e => setCategory(e.target.value)}
           style={{ width: '100%' }}
           />
-          {errors.category && <p>{errors.category}</p>}
+          {errors.category && <p style={{ position: 'absolute', top: '100%', left: '0' }} >{errors.category}</p>}
         </div>
 
-      <div>
+      <div style={{ position:'relative', color:'aqua'}}>
         <input
+          className={styles.input} 
           type="number"
           placeholder="Amount"
           value={amount}
           onChange={e => setAmount(e.target.value)}
           style={{ width: '100%' }}
           />
-          {errors.amount && <p>{errors.amount}</p>}
+          {errors.amount && <p style={{ position: 'absolute', top: '100%', left: '0' }} >{errors.amount}</p>}
         </div>
-        <button 
-          type='submit'
-          style={{ 
-            width: '100%', 
-            height: '38px',  // стандартная высота input
-            padding: '8px 10px',
-            fontSize: '14px',
-            cursor: 'pointer',
-            gap: '20px',
-            marginTop: '-3px',
-            marginLeft: '8px'
-          }}
-        >Add Expense</button>
+        {}
+        <Button
+          type="submit"
+          variant="primary">
+          Add
+        </Button>
       </form>
     )
   }

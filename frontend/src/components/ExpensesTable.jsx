@@ -1,9 +1,13 @@
+import styles from './styles/ExpensesTable.module.scss';
+
 function ExpensesTable ({ expenses }) {
     return (
         <>
-            <h3>Таблица</h3>
-            <div className='my_table'>
-                <table border="1" cellPadding="6" >
+            <div className={styles.csv_table}>
+                {expenses.length === 0 ? (
+                    <div style={{ color:'red', }}>Нет данных для отображения</div>
+                ) : (
+                    <table border="1" cellPadding="6" >
                     <thead>
                         <tr>
                             <th>Дата</th>
@@ -21,6 +25,7 @@ function ExpensesTable ({ expenses }) {
                         ))}
                     </tbody>
                 </table>
+            )}
             </div>
         </>
     )

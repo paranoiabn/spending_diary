@@ -40,12 +40,3 @@
 .read-the-docs {
   color: #888;
 }
-
-
-.my_table {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 10vh;
-  flex-direction: column;
-}

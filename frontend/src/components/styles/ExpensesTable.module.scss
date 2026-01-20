@@ -1,0 +1,83 @@
+@use './variables' as *;
+
+.pageTable {
+    display: flex;
+    flex: 1;
+    min-width: 22vh;
+    gap: 16px;
+    align-items: stretch;
+    background: #2c2c2c;
+    padding: 8px;
+    border-radius: 12px;
+    min-height: 0;
+  }
+
+
+  
+  /* Таблица */
+  .pageTable table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #e5e5e5;
+    font-size: 14px;
+  }
+  
+  /* Заголовок */
+  .pageTable thead {
+    background: #333333;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .pageTable th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 500;
+    color: #f0f0f0;           // чуть светлее для контраста
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  
+  /* Строки */
+  .pageTable td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* Чередование строк */
+  .pageTable tbody tr:nth-child(odd) {
+    background: #2c2c2c;      // основной цвет блока
+  }
+  
+  .pageTable tbody tr:nth-child(even) {
+    background: #313131;
+  }
+  
+  .pageTable tbody tr:hover {
+    background: #3a3a3a;
+  }
+  
+
+  .pageTable::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .pageTable::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 6px;
+  }
+  
+  .pageTable::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+.tableWrapp {
+  flex: 3;
+  min-width: 0;
+}
+
+.totalsWrap {
+  flex: 1;
+  padding: 8px 0px;
+  flex-shrink: 0;
+}

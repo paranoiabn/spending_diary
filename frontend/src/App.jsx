@@ -1,18 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo} from 'react'
 import { API_URL } from './api'
 import './App.css'
 import { calculateTotals } from './utils/calculateTotals';
 import { getCategories } from './utils/categories';
 import { filterByCategory } from './utils/filter';
-import ExpensesList from './components/ExpensesList';
 import { parseCsv } from './utils/csv';
-import AddExpense from './components/AddExpense';
 import TotalsByCategory from './components/TotalsByCategory';
+import TotalAmount from './components/TotalAmount';
 import ManualExpensesSection from './components/ManualExpensesSection';
 import FileUpLoad from './components/FileUpLoad';
 import ExpensesTable from './components/ExpensesTable';
 import CategorySelect from './components/CategorySelect';
- 
+import Header from './components/header';
+import { theme } from './components/styles/theme';
+import styles from './components/styles/TotalSection.module.scss';
+import appWrapper from './components/styles/AppWrapper.module.scss';
+import pageTable from './components/styles/ExpensesTable.module.scss';
+import CsvTable from './components/styles/CsvTable.module.scss';
+import ManualSection from './components/styles/ManualSection.module.scss';
+
 function App() {
   const [ping, setPing] = useState("");
   const [text, setText] = useState("");
@@ -37,27 +43,27 @@ function App() {
   // }, []);
 
 // загружаем из localstorage при старте
-
-// //
-//   const dat1a = { "Food": 100, "Games": 200, "Transport": 50 }
-
-//   const entDat1a = Object.entries(dat1a)
-//   .map(([category, amount]) => ({ category, amount }))
-
-//   console.log(entDat1a);
-// //
-
   const allExpenses = [...csvExpenses, ...manualExpenses];
 
   useEffect(() => {
-    const saved = localStorage.getItem('csvExpenses')
-    if (saved) setCsvExpenses(JSON.parse(saved))
-  }, [])
+    const saved = localStorage.getItem('expenses');
+
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setCsvExpenses(parsed.csv || []);
+      setManualExpenses(parsed.manual || []);
+    }
+  }, []);
 
 // сохраняем в localstorage при изменении
   useEffect(() => {
-    localStorage.setItem('csvExpenses', JSON.stringify(csvExpenses, manualExpenses))
-  }, [csvExpenses, manualExpenses])
+    const dataToSave = {
+      csv: csvExpenses,
+      manual: manualExpenses,
+    };
+
+    localStorage.setItem('expenses', JSON.stringify(dataToSave))
+  }, [csvExpenses, manualExpenses]);
 
   const addExpense = (expense) => {
     // добавляем новый расход
@@ -67,14 +73,12 @@ function App() {
   useEffect(() => {
     const totalsResult = calculateTotals(allExpenses)
     setTotals(totalsResult)
-  }, [csvExpenses, manualExpenses]);
+  }, [allExpenses]);
 
+  const tableData = useMemo(() => {
+    console.log("Считаем общий итог...");
 
-  // const tableData = Object.entries(totals.byCategory).map(
-  //   ([category, amount]) => ({ category, amount })
-  // )  
-
-  const tableData = Object.entries(totals.byCategory)
+    return Object.entries(totals.byCategory)
     .filter(([category]) => selectedCategory === 'all' || category === selectedCategory)
     .map(([category, amount]) => {
       // все расходы этой категории
@@ -91,6 +95,8 @@ function App() {
         date: firstDate // добавляем дату
       };
     });
+  }, [totals.byCategory, selectedCategory, allExpenses]);
+
 
 
   // подсчет manualExpenses
@@ -100,14 +106,13 @@ function App() {
   }
 
 
-  // отображаем список расходов
+  // отражение списка расходов
 
 
   const handleFile = (e) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
   
-      // setSelectedFiles(Array.from(files).map(file => file.name));
       setSelectedFiles(prev => [...prev, ...Array.from(files).map(file => file.name)]);
 
       Array.from(files).forEach((file) => {
@@ -115,22 +120,16 @@ function App() {
   
       reader.onload = () => {
         const csvText = reader.result;
-        // setText(csvText); // ✅ сохраняем сырой CSV в state
         const parsed = parseCsv(csvText)
         console.log('Парсированные данные:', parsed);
-        setCsvExpenses(prev => [...prev, ...parsed]); // ✅ сохраняем таблицу
+        console.log('Категории в parsed:', parsed.map(e => e.category));
+        setCsvExpenses(prev => [...prev, ...parsed]); // сохраням таблицу
       };
       
       reader.readAsText(file);
     });
   };
   
-  // форма
-
-
-    
-  // const allExpenses = [...csvExpenses, ...expenses];
-
   const hasExpenses = manualExpenses.some((manualExpenses) => {
     if ( manualExpenses.amount > 0) {
       return true;
@@ -144,11 +143,6 @@ function App() {
       return true;
     }
   });
-
-  // const totalCsv = csvExpenses.reduce((sum, e) => {
-  //   return sum + e.amount
-  // }, 0);
-
 
   const totalManual = manualExpenses.reduce((sum, e) => {
     return sum + e.amount
@@ -164,56 +158,88 @@ function App() {
 
   const deleteManualExpense = (index) => {
     setManualExpenses(prev => prev.filter((item, idx) => idx !== index));
-  }
-
-
-
-  // const csvText = `
-  // data,category,amount
-  // 2025-12-01,Food,520
-  // 2025-12-02,Games,999
-  // 2025-12-03,Food,300
-  // `
-
-  // console.log(expenses);
-  // console.log(totals.byCategory);
-  
+  }  
 
   const mergedExpenses = Object.entries(totals.byCategory).map(
     ([category, amount]) => ({ category, amount })
   );
   
+  // function TotalAmount1({ amount, category }) {
+  //   let color;
+    
+  //   if (category === 'Food') {
+  //     color = theme.colors.error;
+  //   } else if (category === 'Transport') {
+  //     color = theme.colors.warning
+  //   } else {
+  //     color = theme.colors.success;
+  //   }
+
+  //   return (
+  //     <div >
+  //       {category}: {amount} $
+  //     </div>
+  //   )
+  // }
+
+  // const mockExpenses = [
+  //   { date: '2026-01-01', category: 'Food', amount: 520 },
+  //   { date: '2026-01-02', category: 'Games', amount: 999 },
+  //   { date: '2026-01-03', category: 'Food', amount: 300 },
+  // ];
+
 
   return (
-      <div style={{ padding: 20 }}>
-        <FileUpLoad handleFile={handleFile}
-        selectedFiles={selectedFiles}
-        />
+      <div className={appWrapper.appWrapp}>
+        <Header />
+        <div style={{ fontFamily:'Changa One' }}>
+          
+          <section className={styles.totalSection}>
+            <TotalAmount total={totals.total}/>
+          </section>
+      
+          <section className='upload_section'>
+          <FileUpLoad 
+            handleFile={handleFile}
+            selectedFiles={selectedFiles}
+            />
+           </section>
+           <pre style={{ maxHeight: 200, overflow: "auto" }}>{text}</pre>
+           
+            <section>
+              <CategorySelect
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              />
+            </section>
 
-      <pre style={{ maxHeight: 200, overflow: "auto" }}>{text}</pre>
+            <section className={pageTable.pageTable} >
+              <div  className={pageTable.tableWrapp}>
+                <ExpensesTable className={CsvTable.csv_table}
+                expenses={tableData} />
+              </div>
 
-      <CategorySelect
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
-      />
+              <div className={pageTable.totalsWrap}>
+                <TotalsByCategory 
+                  totalsByCategory={totals.byCategory}
+                />
+              </div>
+              
+            </section>
 
-      <ExpensesTable expenses={allExpenses} />
-
-      <TotalsByCategory
-        total={totals.total}
-        totalsByCategory={totals.byCategory}
-      />
-
-    <ManualExpensesSection
-        addManualExpense={addManualExpense}
-        manualExpenses={manualExpenses}
-        hasExpenses={hasExpenses}
-        todayExpenseData={todayExpense}
-        totalManual={totalManual}
-        deleteManualExpense={deleteManualExpense}
-    />
-  </div>
+            <section className={ManualSection.manualSection}>
+              <ManualExpensesSection
+                addManualExpense={addManualExpense}
+                manualExpenses={manualExpenses}
+                hasExpenses={hasExpenses}
+                todayExpenseData={todayExpense}
+                totalManual={totalManual}
+                deleteManualExpense={deleteManualExpense}
+              />
+            </section>
+          </div> 
+      </div>
   );
 }
 

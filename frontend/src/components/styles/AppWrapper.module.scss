@@ -1,0 +1,11 @@
+@use './variables' as *; // импорт всех переменных
+
+.appWrapp {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.appWrapp > * {
+    flex-shrink: 0;
+}

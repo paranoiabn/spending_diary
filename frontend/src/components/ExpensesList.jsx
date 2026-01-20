@@ -5,7 +5,7 @@ function ExpensesList({ csvExpenses, onDelete }) {
     return <div>Нет данных</div>;
   }
     return (
-      <ul>
+      <ul style={{ color:'red' }}>
         {csvExpenses.map((e, idx) => (
           <li key={idx}>
             {e.date ? new Date(e.date).toLocaleDateString('ru-RU') : 'Нет даты'} - {e.category} - {e.amount}
